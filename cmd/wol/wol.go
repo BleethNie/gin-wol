@@ -5,17 +5,15 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/BleethNie/gin-wol/wol"
+	flags "github.com/jessevdk/go-flags"
+	"github.com/mattn/go-colorable"
+	"github.com/sabhiram/go-colorize"
 	"net"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
-
-	"github.com/mattn/go-colorable"
-	"github.com/sabhiram/go-colorize"
-	"github.com/sabhiram/go-wol/wol"
-
-	flags "github.com/jessevdk/go-flags"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
