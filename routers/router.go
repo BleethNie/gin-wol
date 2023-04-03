@@ -28,10 +28,10 @@ func BackRouter() http.Handler {
 	base := r.Group("/api")
 	{
 		//获取局域网内所有设备信息
-		base.POST("/getDeviceMacList", deviceController.GetDeviceMacList)
+		base.GET("/queryDeviceList", deviceController.QueryDeviceList)
 
 		//设置单个MAC信息
-		base.POST("/setMacInfo", deviceController.SetMacInfo)
+		base.POST("/setMacInfo", deviceController.Wol)
 
 		//唤醒
 		base.POST("/wol", deviceController.Wol)

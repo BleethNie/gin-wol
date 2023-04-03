@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/BleethNie/gin-wol/config"
 	routes "github.com/BleethNie/gin-wol/routers"
 	"github.com/BleethNie/gin-wol/utils"
@@ -24,21 +23,16 @@ func BackendServer() *http.Server {
 
 var g errgroup.Group
 
-func parseMigrateFlag() string {
-	var migrateFlag string
-	flag.StringVar(&migrateFlag, "migrateFlag", "false", "autoMigrate是否进行数据迁移,默认为false")
-	flag.Parse()
-	return migrateFlag
-}
-
 func main() {
-	migrateFlag := parseMigrateFlag()
 
 	utils.InitViper()
-	utils.InitSQLite(migrateFlag)
+	utils.InitDB()
 
 	g.Go(func() error {
 		return BackendServer().ListenAndServe()
 	})
 
+	if err := g.Wait(); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -3,7 +3,7 @@
 AppMode = "release"   # debug 开发环境, release 生产环境
 BackPort = "127.0.0.1:8765"  # 前台服务端口
 
-[SQLite]
-Name = "config/app.db"
+[Db]
+Path = "config/app.db"
 
 

@@ -5,7 +5,7 @@ var Cfg Config
 // 配置文件的结构体
 type Config struct {
 	Server Server
-	SQLite SQLite
+	Db     Db
 }
 
 type Server struct {
@@ -15,6 +15,6 @@ type Server struct {
 	UseHttps  bool
 }
 
-type SQLite struct {
-	Name string
+type Db struct {
+	Path string
 }
