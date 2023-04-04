@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	model "github.com/BleethNie/gin-wol/model/entity"
 	"github.com/axgle/mahonia"
 	"log"
@@ -31,6 +32,8 @@ func GetDeviceInfoList(subnet string) []model.DeviceEntity {
 				deviceEntity.Ip = ip
 				deviceEntity.Mac = mac
 				deviceEntity.HostName = hostname
+
+				fmt.Println("ip =   %s  ,deviceEntity =  %s ", ip, deviceEntity)
 
 				deviceList = append(deviceList, deviceEntity)
 

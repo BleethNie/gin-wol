@@ -16,6 +16,9 @@ type DeviceController struct{}
 func (*DeviceController) QueryDeviceList(c *gin.Context) {
 	subnet := c.Query("subnet")
 	fmt.Println(subnet)
+	if subnet == "" {
+		subnet = "192.168.2.0/24"
+	}
 	deviceList := utils.GetDeviceInfoList(subnet)
 	r.SuccessData(c, deviceList)
 }
@@ -46,9 +49,10 @@ func (*DeviceController) UpdateDeviceInfo(c *gin.Context) {
 
 // 发送wol,进行网络唤醒
 func (*DeviceController) Wol(c *gin.Context) {
-	mac := c.Query("mac")
-	hostname := c.Query("hostname")
-	nickname := c.Query("nickname")
+	mac := c.PostForm("mac")
+	fmt.Println("wol 发送中，mac =", mac)
+	hostname := c.PostForm("hostname")
+	nickname := c.PostForm("nickname")
 	if mac != "" {
 		utils.WakeOnLAN(mac)
 	}

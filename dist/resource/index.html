@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>局域网WOL工具</title>
+    <!-- 引入 Vue 3 库 -->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- Import Vue 3 -->
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- Import component library -->
+    <script src="//unpkg.com/element-plus"></script>
+    <!-- Import style -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css"/>
+    <!-- 引入 axios 库 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="6">
+            <el-input v-model="subnet" placeholder="参数1"></el-input>
+            <el-button type="primary" @click="loadRest">接口数据</el-button>
+            <el-button type="primary" @click="loadDB">数据库数据</el-button>
+        </el-col>
+        <el-col :span="6">
+            <el-input v-model="searchText" placeholder="搜索关键词"></el-input>
+            <el-button type="primary" @click="loadRest">内容搜索</el-button>
+        </el-col>
+    </el-row>
+    <el-table :data="filteredData" border>
+        <el-table-column prop="mac" label="MAC地址" width="180"></el-table-column>
+        <el-table-column prop="ip" label="IP地址" width="180"></el-table-column>
+        <el-table-column prop="host_name" label="主机名" width="250"></el-table-column>
+        <el-table-column prop="nick_name" label="昵称" width="250"></el-table-column>
+        <el-table-column label="Operations">
+            <template #default="scope">
+                <el-button size="small" @click="handleSend(scope.$index, scope.row)">Send</el-button>
+                <el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+</div>
+
+<script>
+    // 创建 Vue 应用实例
+    const app = Vue.createApp({
+        data() {
+            return {
+                searchText: '',
+                tableData: [],
+                subnet: ''
+            }
+        },
+        computed: {
+            filteredData() {
+                return this.tableData.filter(
+                    (item) =>
+                        item.mac.includes(this.searchText) ||
+                        item.ip.includes(this.searchText) ||
+                        item.host_name.includes(this.searchText) ||
+                        item.nick_name.includes(this.searchText)
+                )
+            },
+        },
+        methods: {
+            loadRest() {
+                axios.get('/api/queryDeviceList', {
+                    params: {
+                        subnet: this.subnet
+                    }
+                }).then((response) => {
+                    console.log(response.data.data)
+                    this.tableData = response.data.data
+                })
+            },
+            loadDB() {
+                axios.get('/api/queryDbDeviceList')
+                    .then((response) => {
+                        console.log(response.data.data)
+                        this.tableData = response.data.data
+                    })
+            },
+            handleSend(index, row) {
+                axios({
+                    method: "post",
+                    url: "/api/wol",
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    data: {
+                        mac: row.mac
+                    }
+                }).then((res) => {
+                    console.log(res.data);
+                })
+            },
+            handleEdit(index, row) {
+                console.log(index, row)
+            },
+            handleDelete(index, row) {
+                console.log(index, row)
+            }
+        },
+        mounted() {
+            this.loadRest()
+        },
+    })
+
+    // 在 Vue 应用实例中注册 Element Plus 组件
+    app.component('el-input', ElementPlus.ElInput)
+    app.component('el-table', ElementPlus.ElTable)
+    app.component('el-table-column', ElementPlus.ElTableColumn)
+
+    // 将 Vue 应用实例挂载到页面中
+    app.mount('#app')
+</script>
+</body>
+</html>

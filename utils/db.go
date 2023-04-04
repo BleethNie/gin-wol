@@ -3,7 +3,7 @@ package utils
 import (
 	"github.com/BleethNie/gin-wol/config"
 	model "github.com/BleethNie/gin-wol/model/entity"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"log"
 )

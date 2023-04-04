@@ -77,22 +77,19 @@ subnet | 192.168.2.0/24 | String | 是 | -
 ## 发送wol
 
 #### 接口URL
-> /api/wol?mac=00-f4-8d-b7-18-a7
+> /api/wol
 
 #### 请求方式
 > POST
 
 #### Content-Type
-> json
-
-#### 请求Query参数
-参数名 | 示例值 | 参数类型 | 是否必填 | 参数描述
---- | --- | --- | --- | ---
-mac | 00-f4-8d-b7-18-a7 | String | 是 | -
+> form-data
 
 #### 请求Body参数
 ```json
-
+{
+  "mac": "00-f4-8d-b7-18-a7"
+}
 ```
 
 #### 成功响应示例
