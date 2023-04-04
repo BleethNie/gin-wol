@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/BleethNie/gin-wol/config"
+	"github.com/BleethNie/gin-wol/dao"
 	routes "github.com/BleethNie/gin-wol/routers"
-	"github.com/BleethNie/gin-wol/utils"
+	utils "github.com/BleethNie/gin-wol/utils"
 	"golang.org/x/sync/errgroup"
 	"log"
 	"net/http"
@@ -26,7 +27,8 @@ var g errgroup.Group
 func main() {
 
 	utils.InitViper()
-	utils.InitDB()
+	dao.DB = utils.InitSqlite()
+	utils.AutoMigrate(dao.DB)
 
 	g.Go(func() error {
 		return BackendServer().ListenAndServe()

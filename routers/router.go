@@ -29,16 +29,11 @@ func BackRouter() http.Handler {
 	{
 		//获取局域网内所有设备信息
 		base.GET("/queryDeviceList", deviceController.QueryDeviceList)
-
-		//设置单个MAC信息
-		base.POST("/setMacInfo", deviceController.Wol)
-
+		base.GET("/queryDbDeviceList", deviceController.QueryDbDeviceList)
+		//更新设备信息
+		base.POST("/updateDeviceInfo", deviceController.UpdateDeviceInfo)
 		//唤醒
 		base.POST("/wol", deviceController.Wol)
-
-		//检查是否已经开机并标识
-		base.POST("/getDeviceStatus", deviceController.Wol)
-
 	}
 	return r
 }

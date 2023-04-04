@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"container/list"
-	"fmt"
 	model "github.com/BleethNie/gin-wol/model/entity"
 	"github.com/axgle/mahonia"
 	"log"
@@ -13,12 +11,12 @@ import (
 	"sync"
 )
 
-func GetDeviceInfoList(subnet string) *list.List {
+func GetDeviceInfoList(subnet string) []model.DeviceEntity {
 	ips, err := getActiveIPs(subnet)
 	if err != nil {
 		log.Fatal(err)
 	}
-	deviceList := list.New()
+	var deviceList []model.DeviceEntity
 
 	var wg sync.WaitGroup
 	for i := 0; i < len(ips); i++ {
@@ -29,13 +27,13 @@ func GetDeviceInfoList(subnet string) *list.List {
 			hostname, err1 := getHostname(ip)
 			if err1 == nil {
 				mac := getMacAddr(ip)
-				fmt.Printf("%s ==> %s ==> %s \n", ip, hostname, mac)
 
 				deviceEntity.Ip = ip
 				deviceEntity.Mac = mac
 				deviceEntity.HostName = hostname
 
-				deviceList.PushBack(deviceEntity)
+				deviceList = append(deviceList, deviceEntity)
+
 			}
 			wg.Done()
 		}(ip)
