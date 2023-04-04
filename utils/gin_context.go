@@ -1,7 +1,6 @@
 package utils
 
 import (
-	req "github.com/BleethNie/gin-wol/model/form"
 	"github.com/BleethNie/gin-wol/utils/r"
 	"log"
 	"net/http"
@@ -55,17 +54,6 @@ func BindQuery[T any](c *gin.Context) (data T) {
 	// pageSize := val.FieldByName("PageSize").Int()
 	// fmt.Println("pageSize: ", pageSize)
 	// val.FieldByName("PageSize").Elem().SetInt(12)
-	return
-}
-
-// Param 分页绑定(处理了 PageSize 和 PageQuery)
-func BindPageQuery(c *gin.Context) (data req.PageQuery) {
-	if err := c.ShouldBindQuery(&data); err != nil {
-		log.Fatalf("BindQuery", zap.Error(err))
-		panic(r.ERROR_REQUEST_PARAM)
-	}
-	// 检查分页参数
-	CheckQueryPage(&data.PageSize, &data.PageNum)
 	return
 }
 

@@ -16,11 +16,8 @@ func BackRouter() http.Handler {
 	r.SetTrustedProxies([]string{"*"})
 
 	// 静态文件服务
-	r.Use(static.Serve("/", static.LocalFile("dist/admin", true)))
+	r.Use(static.Serve("/", static.LocalFile("dist/resource", true)))
 	r.StaticFS("/dist", http.Dir("./dist"))
-
-	//r.Static("/public", "./public")
-	//r.StaticFS("/dir", http.Dir("./public")) // 将 public 目录内的文件列举展示
 
 	r.Use(middleware.Cors()) // 跨域中间件
 
@@ -34,6 +31,7 @@ func BackRouter() http.Handler {
 		base.POST("/updateDeviceInfo", deviceController.UpdateDeviceInfo)
 		//唤醒
 		base.POST("/wol", deviceController.Wol)
+		base.POST("/clearDbAndSave", deviceController.ClearDbAndSave)
 	}
 	return r
 }

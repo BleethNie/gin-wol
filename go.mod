@@ -3,7 +3,6 @@ module github.com/BleethNie/gin-wol
 go 1.19
 
 require (
-	github.com/coreos/bbolt v1.3.1-coreos.6.0.20180223184059-4f5275f4ebbf
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.8.2
@@ -11,11 +10,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/google/gopacket v1.1.19
-	github.com/jessevdk/go-flags v0.0.0-20150816100521-1acbbaff2f34
-	github.com/mattn/go-colorable v0.1.12
-	github.com/sabhiram/go-colorize v0.0.0-20210403184538-366f55d711cf
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.1
 	github.com/timest/gomanuf v0.0.0-20220110084332-2ee279c1b325
 	github.com/wonderivan/logger v1.0.0
 	go.uber.org/zap v1.21.0

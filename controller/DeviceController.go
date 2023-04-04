@@ -18,7 +18,6 @@ func (*DeviceController) QueryDeviceList(c *gin.Context) {
 	fmt.Println(subnet)
 	deviceList := utils.GetDeviceInfoList(subnet)
 	r.SuccessData(c, deviceList)
-
 }
 
 // 查询所有数据库里的数据
@@ -42,7 +41,7 @@ func (*DeviceController) UpdateDeviceInfo(c *gin.Context) {
 	} else {
 		dao.Create(&device)
 	}
-	c.JSON(http.StatusOK, gin.H{"ok": "更新成功"})
+	r.SuccessMessage(c, "更新成功")
 }
 
 // 发送wol,进行网络唤醒
@@ -65,8 +64,19 @@ func (*DeviceController) Wol(c *gin.Context) {
 			utils.WakeOnLAN(mac)
 		}
 	}
+	r.SuccessMessage(c, "发送WOL成功")
+}
 
-	c.JSON(http.StatusOK, gin.H{"msg": "wol发送成功"})
+// 是否在线
+func (*DeviceController) ClearDbAndSave(c *gin.Context) {
+	dao.Delete(model.DeviceEntity{}, "ip like ?", "%.%")
+
+	subnet := c.Query("subnet")
+	deviceList := utils.GetDeviceInfoList(subnet)
+	for _, value := range deviceList {
+		dao.Create(&value)
+	}
+	r.SuccessData(c, deviceList)
 }
 
 // 是否在线

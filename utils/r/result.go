@@ -47,3 +47,7 @@ func SuccessData(c *gin.Context, data any) {
 func Success(c *gin.Context) {
 	Send(c, http.StatusOK, OK, nil)
 }
+
+func SuccessMessage(c *gin.Context, message string) {
+	ReturnJson(c, http.StatusOK, OK, message, "")
+}
