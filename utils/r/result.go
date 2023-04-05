@@ -8,18 +8,18 @@ import (
 
 // 响应结构体
 type Response struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Data    any    `json:"data"`
+	Status int    `json:"status"`
+	Msg    string `json:"msg"`
+	Data   any    `json:"data"`
 }
 
 // 返回 JSON 数据
 func ReturnJson(c *gin.Context, httpCode, code int, msg string, data any) {
 	// c.Header("", "") // 根据需要在头部添加其他信息
 	c.JSON(httpCode, Response{
-		Code:    code,
-		Message: msg,
-		Data:    data,
+		Status: code,
+		Msg:    msg,
+		Data:   data,
 	})
 }
 

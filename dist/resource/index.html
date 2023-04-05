@@ -1,119 +1,205 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8"/>
-    <title>局域网WOL工具</title>
-    <!-- 引入 Vue 3 库 -->
-    <script src="https://unpkg.com/vue@next"></script>
-    <!-- Import Vue 3 -->
-    <script src="//unpkg.com/vue@3"></script>
-    <!-- Import component library -->
-    <script src="//unpkg.com/element-plus"></script>
-    <!-- Import style -->
-    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css"/>
-    <!-- 引入 axios 库 -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8" />
+    <title>amis demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="stylesheet" href="aims/sdk.css" />
+    <link rel="stylesheet" href="aims/helper.css" />
+    <link rel="stylesheet" href="aims/iconfont.css" />
+    <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
+    <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
+    <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
+    <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有细节功能用不了，如果发现请报 issue -->
+    <style>
+        html,
+        body,
+        .app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-<div id="app">
-    <el-row>
-        <el-col :span="6">
-            <el-input v-model="subnet" placeholder="参数1"></el-input>
-            <el-button type="primary" @click="loadRest">接口数据</el-button>
-            <el-button type="primary" @click="loadDB">数据库数据</el-button>
-        </el-col>
-        <el-col :span="6">
-            <el-input v-model="searchText" placeholder="搜索关键词"></el-input>
-            <el-button type="primary" @click="loadRest">内容搜索</el-button>
-        </el-col>
-    </el-row>
-    <el-table :data="filteredData" border>
-        <el-table-column prop="mac" label="MAC地址" width="180"></el-table-column>
-        <el-table-column prop="ip" label="IP地址" width="180"></el-table-column>
-        <el-table-column prop="host_name" label="主机名" width="250"></el-table-column>
-        <el-table-column prop="nick_name" label="昵称" width="250"></el-table-column>
-        <el-table-column label="Operations">
-            <template #default="scope">
-                <el-button size="small" @click="handleSend(scope.$index, scope.row)">Send</el-button>
-                <el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-            </template>
-        </el-table-column>
-    </el-table>
-</div>
-
-<script>
-    // 创建 Vue 应用实例
-    const app = Vue.createApp({
-        data() {
-            return {
-                searchText: '',
-                tableData: [],
-                subnet: ''
-            }
-        },
-        computed: {
-            filteredData() {
-                return this.tableData.filter(
-                    (item) =>
-                        item.mac.includes(this.searchText) ||
-                        item.ip.includes(this.searchText) ||
-                        item.host_name.includes(this.searchText) ||
-                        item.nick_name.includes(this.searchText)
-                )
-            },
-        },
-        methods: {
-            loadRest() {
-                axios.get('/api/queryDeviceList', {
-                    params: {
-                        subnet: this.subnet
-                    }
-                }).then((response) => {
-                    console.log(response.data.data)
-                    this.tableData = response.data.data
-                })
-            },
-            loadDB() {
-                axios.get('/api/queryDbDeviceList')
-                    .then((response) => {
-                        console.log(response.data.data)
-                        this.tableData = response.data.data
-                    })
-            },
-            handleSend(index, row) {
-                axios({
-                    method: "post",
-                    url: "/api/wol",
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                    data: {
-                        mac: row.mac
-                    }
-                }).then((res) => {
-                    console.log(res.data);
-                })
-            },
-            handleEdit(index, row) {
-                console.log(index, row)
-            },
-            handleDelete(index, row) {
-                console.log(index, row)
-            }
-        },
-        mounted() {
-            this.loadRest()
-        },
-    })
-
-    // 在 Vue 应用实例中注册 Element Plus 组件
-    app.component('el-input', ElementPlus.ElInput)
-    app.component('el-table', ElementPlus.ElTable)
-    app.component('el-table-column', ElementPlus.ElTableColumn)
-
-    // 将 Vue 应用实例挂载到页面中
-    app.mount('#app')
+<div id="root" class="app-wrapper"></div>
+<script src="aims/sdk.js"></script>
+<script type="text/javascript">
+    (function () {
+        let amis = amisRequire('amis/embed');
+        // 通过替换下面这个配置来生成不同页面
+        let amisJSON = {
+            type: 'page',
+            title: '局域网WOL管理页面',
+            body: [
+                {
+                    type: 'crud',
+                    "syncLocation": false,
+                    "autoGenerateFilter": true,
+                    "headerToolbar": [
+                        {
+                            "label": "即时查询",
+                            "type": "button",
+                            "actionType": "dialog",
+                            "level": "primary",
+                            "dialog": {
+                                "title": "即时查询",
+                                "type": "form",
+                                "api": {
+                                    "method": "get",
+                                    "url": "/api/queryDeviceList?subnet=${subnet}"
+                                },
+                                "mode": "horizontal",
+                                "body": [
+                                    {
+                                        "type": "input-text",
+                                        "name": "subnet",
+                                        "label": "子网"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "label": "数据库查询",
+                            "type": "button",
+                            "actionType": "dialog",
+                            "level": "info",
+                            "dialog": {
+                                "title": "弹框标题",
+                                "body": "这是一个弹框"
+                            }
+                        },
+                        {
+                            "label": "清空数据库并重新查询",
+                            "type": "button",
+                            "actionType": "dialog",
+                            "icon": "fa fa-plus",
+                            "level": "info",
+                            "dialog": {
+                                "title": "弹框标题",
+                                "body": "这是一个弹框"
+                            }
+                        },
+                        {
+                            "type": "columns-toggler",
+                            "align": "right",
+                            "draggable": true,
+                            "icon": "fas fa-cog",
+                            "overlay": true,
+                            "footerBtnSize": "sm"
+                        }
+                    ],
+                    "columns": [
+                        {
+                            "name": "mac",
+                            "label": "MAC",
+                            "searchable": {
+                                "type": "input-text",
+                                "name": "mac",
+                                "label": "MAC",
+                                "placeholder": "输入MAC"
+                            }
+                        },
+                        {
+                            "name": "ip",
+                            "label": "IP"
+                        },
+                        {
+                            "name": "hostname",
+                            "label": "HostName",
+                            "searchable": {
+                                "type": "input-text",
+                                "name": "hostname",
+                                "label": "HostName",
+                                "placeholder": "输入HostName"
+                            }
+                        },
+                        {
+                            "name": "nickname",
+                            "label": "NiceName",
+                            "searchable": {
+                                "type": "input-text",
+                                "name": "nickname",
+                                "label": "NiceName",
+                                "placeholder": "输入NiceName"
+                            }
+                        },
+                        {
+                            "type": "operation",
+                            "label": "操作",
+                            "buttons": [
+                                {
+                                    "label": "发送",
+                                    "type": "button",
+                                    "actionType": "drawer",
+                                    "drawer": {
+                                        "title": "新增表单",
+                                        "body": {
+                                            "type": "form",
+                                            "initApi": "/amis/api/mock2/sample/${id}",
+                                            "api": "post:/amis/api/mock2/sample/${id}",
+                                            "body": [
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "engine",
+                                                    "label": "Engine"
+                                                },
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "browser",
+                                                    "label": "Browser"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "label": "修改",
+                                    "type": "button",
+                                    "actionType": "drawer",
+                                    "drawer": {
+                                        "title": "新增表单",
+                                        "body": {
+                                            "type": "form",
+                                            "initApi": "/amis/api/mock2/sample/${id}",
+                                            "api": "post:/amis/api/mock2/sample/${id}",
+                                            "body": [
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "engine",
+                                                    "label": "Engine"
+                                                },
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "browser",
+                                                    "label": "Browser"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "label": "删除",
+                                    "type": "button",
+                                    "level": "link",
+                                    "className": "text-danger",
+                                    "disabledOn": "this.grade === 'A'"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        let amisScoped = amis.embed('#root', amisJSON);
+    })();
 </script>
 </body>
 </html>
