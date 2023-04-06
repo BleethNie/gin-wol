@@ -9,9 +9,9 @@
             content="width=device-width, initial-scale=1, maximum-scale=1"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <link rel="stylesheet" href="aims/sdk.css" />
-    <link rel="stylesheet" href="aims/helper.css" />
-    <link rel="stylesheet" href="aims/iconfont.css" />
+    <link rel="stylesheet" href="amis/sdk.css" />
+    <link rel="stylesheet" href="amis/helper.css" />
+    <link rel="stylesheet" href="amis/iconfont.css" />
     <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
     <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
     <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
@@ -30,7 +30,7 @@
 </head>
 <body>
 <div id="root" class="app-wrapper"></div>
-<script src="aims/sdk.js"></script>
+<script src="amis/sdk.js"></script>
 <script type="text/javascript">
     (function () {
         let amis = amisRequire('amis/embed');
@@ -40,62 +40,24 @@
             title: '局域网WOL管理页面',
             body: [
                 {
-                    type: 'crud',
-                    "syncLocation": false,
-                    "autoGenerateFilter": true,
-                    "headerToolbar": [
+                    "type":"form",
+                    "titile":"表单查询",
+                    "target": "my_crud",
+                    "submitText": "搜索",
+                    "body":[
                         {
-                            "label": "即时查询",
-                            "type": "button",
-                            "actionType": "dialog",
-                            "level": "primary",
-                            "dialog": {
-                                "title": "即时查询",
-                                "type": "form",
-                                "api": {
-                                    "method": "get",
-                                    "url": "/api/queryDeviceList?subnet=${subnet}"
-                                },
-                                "mode": "horizontal",
-                                "body": [
-                                    {
-                                        "type": "input-text",
-                                        "name": "subnet",
-                                        "label": "子网"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "label": "数据库查询",
-                            "type": "button",
-                            "actionType": "dialog",
-                            "level": "info",
-                            "dialog": {
-                                "title": "弹框标题",
-                                "body": "这是一个弹框"
-                            }
-                        },
-                        {
-                            "label": "清空数据库并重新查询",
-                            "type": "button",
-                            "actionType": "dialog",
-                            "icon": "fa fa-plus",
-                            "level": "info",
-                            "dialog": {
-                                "title": "弹框标题",
-                                "body": "这是一个弹框"
-                            }
-                        },
-                        {
-                            "type": "columns-toggler",
-                            "align": "right",
-                            "draggable": true,
-                            "icon": "fas fa-cog",
-                            "overlay": true,
-                            "footerBtnSize": "sm"
+                            "type": "input-text",
+                            "name": "subnet",
+                            "label": "子网信息"
                         }
-                    ],
+                    ]
+                },
+                {
+                    "type": 'crud',
+                    "syncLocation": false,
+                    "name": "my_crud",
+                    "autoGenerateFilter": true,
+                    "api": "/api/queryDeviceList",
                     "columns": [
                         {
                             "name": "mac",
@@ -136,50 +98,60 @@
                             "label": "操作",
                             "buttons": [
                                 {
-                                    "label": "发送",
+                                    "label": "WOL唤醒",
                                     "type": "button",
-                                    "actionType": "drawer",
-                                    "drawer": {
-                                        "title": "新增表单",
-                                        "body": {
-                                            "type": "form",
-                                            "initApi": "/amis/api/mock2/sample/${id}",
-                                            "api": "post:/amis/api/mock2/sample/${id}",
-                                            "body": [
-                                                {
-                                                    "type": "input-text",
-                                                    "name": "engine",
-                                                    "label": "Engine"
-                                                },
-                                                {
-                                                    "type": "input-text",
-                                                    "name": "browser",
-                                                    "label": "Browser"
-                                                }
-                                            ]
+                                    "actionType": "ajax",
+                                    "level": "success",
+                                    "api": {
+                                        "method":"post",
+                                        "url": "/api/wol",
+                                        "dataType": "form-data",
+                                        "data":{
+                                            "mac":"${mac}"
                                         }
                                     }
+
                                 },
                                 {
-                                    "label": "修改",
+                                    "label": "更新",
                                     "type": "button",
+                                    "level": "info",
                                     "actionType": "drawer",
                                     "drawer": {
-                                        "title": "新增表单",
+                                        "title": "修改表单",
                                         "body": {
                                             "type": "form",
-                                            "initApi": "/amis/api/mock2/sample/${id}",
-                                            "api": "post:/amis/api/mock2/sample/${id}",
+                                            "initApi": "/api/getDeviceInfo?mac=${mac}",
+                                            "api": {
+                                                "method":"post",
+                                                "url":"/api/updateDeviceInfo",
+                                                "data":{
+                                                    "mac":"${mac}",
+                                                    "ip":"${ip}",
+                                                    "nickname":"${nickname}",
+                                                    "hostname":"${hostname}"
+                                                }
+                                            },
                                             "body": [
                                                 {
                                                     "type": "input-text",
-                                                    "name": "engine",
-                                                    "label": "Engine"
+                                                    "name": "mac",
+                                                    "label": "Mac"
                                                 },
                                                 {
                                                     "type": "input-text",
-                                                    "name": "browser",
-                                                    "label": "Browser"
+                                                    "name": "ip",
+                                                    "label": "IP"
+                                                },
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "hostname",
+                                                    "label": "HostName"
+                                                },
+                                                {
+                                                    "type": "input-text",
+                                                    "name": "nickname",
+                                                    "label": "NiceName"
                                                 }
                                             ]
                                         }
@@ -188,9 +160,15 @@
                                 {
                                     "label": "删除",
                                     "type": "button",
-                                    "level": "link",
-                                    "className": "text-danger",
-                                    "disabledOn": "this.grade === 'A'"
+                                    "level": "danger",
+                                    "api": {
+                                        "method":"post",
+                                        "url":"/api/updateDeviceInfo",
+                                        "dataType": "form-data",
+                                        "data":{
+                                            "mac":"${mac}"
+                                        }
+                                    }
                                 }
                             ]
                         }

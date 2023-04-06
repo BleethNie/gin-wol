@@ -27,6 +27,7 @@ func BackRouter() http.Handler {
 		//获取局域网内所有设备信息
 		base.GET("/queryDeviceList", deviceController.QueryDeviceList)
 		base.GET("/queryDbDeviceList", deviceController.QueryDbDeviceList)
+		base.GET("/getDeviceInfo", deviceController.GetDeviceInfo)
 		//更新设备信息
 		base.POST("/updateDeviceInfo", deviceController.UpdateDeviceInfo)
 		//唤醒

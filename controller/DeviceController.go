@@ -20,13 +20,17 @@ func (*DeviceController) QueryDeviceList(c *gin.Context) {
 		subnet = "192.168.2.0/24"
 	}
 	deviceList := utils.GetDeviceInfoList(subnet)
-	r.SuccessData(c, deviceList)
+	result := make(map[string]any, 1)
+	result["items"] = deviceList
+	r.SendData(c, 0, result)
 }
 
 // 查询所有数据库里的数据
 func (*DeviceController) QueryDbDeviceList(c *gin.Context) {
-	entityList := dao.List([]model.DeviceEntity{}, "*", "", "")
-	r.SuccessData(c, entityList)
+	deviceList := dao.List([]model.DeviceEntity{}, "*", "", "")
+	result := make(map[string]any, 1)
+	result["items"] = deviceList
+	r.SendData(c, 0, result)
 
 }
 
@@ -44,7 +48,29 @@ func (*DeviceController) UpdateDeviceInfo(c *gin.Context) {
 	} else {
 		dao.Create(&device)
 	}
-	r.SuccessMessage(c, "更新成功")
+	r.SendMessage(c, 0, "保存成功")
+}
+
+// 获取设备信息
+func (*DeviceController) GetDeviceInfo(c *gin.Context) {
+	mac := c.Query("mac")
+	if mac == "" {
+		r.SendMessage(c, 0, "查询失败,mac参数不存在")
+		return
+	}
+	device := dao.GetOne(model.DeviceEntity{}, "mac = ?", mac)
+	r.SendData(c, 0, device)
+}
+
+// 获取设备信息
+func (*DeviceController) deleteDeviceInfo(c *gin.Context) {
+	mac := c.Query("mac")
+	if mac == "" {
+		r.SendMessage(c, 0, "查询失败,mac参数不存在")
+		return
+	}
+	dao.Delete(model.DeviceEntity{}, "mac = ?", mac)
+	r.SendData(c, 0, "删除成功")
 }
 
 // 发送wol,进行网络唤醒
@@ -68,7 +94,7 @@ func (*DeviceController) Wol(c *gin.Context) {
 			utils.WakeOnLAN(mac)
 		}
 	}
-	r.SuccessMessage(c, "发送WOL成功")
+	r.SendData(c, 0, "发送WOL成功")
 }
 
 // 是否在线

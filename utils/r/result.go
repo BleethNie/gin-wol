@@ -40,6 +40,10 @@ func SendData(c *gin.Context, code int, data any) {
 	Send(c, http.StatusOK, code, data)
 }
 
+func SendMessage(c *gin.Context, code int, msg string) {
+	ReturnJson(c, http.StatusOK, code, msg, "")
+}
+
 func SuccessData(c *gin.Context, data any) {
 	Send(c, http.StatusOK, OK, data)
 }
